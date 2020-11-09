@@ -1,66 +1,47 @@
 import React, {Component} from 'react';
 import {Redirect} from 'react-router-dom';
+import {signin, authenticate} from '../auth';
 
 class Signin extends Component {
-	
+
 	constructor() {
 		super();
 		this.state = {
 			email: "",
 			password: "",
 			error: "",
-			redirectToRefrer: false
+			redirectToRefrer: false,
+			loading: false
 		}
 	}
 
 	handleChange = name => event => {
 		this.setState({error: ""});
-		this.setState({ [name]: event.target.value});			//revise syntax
+		this.setState({ [name]: event.target.value});			//revise syntax`
 	};
-
-	authenticate (jwt, next) {
-		if(typeof window !== "undefined") {
-			localStorage.setItem("jwt",JSON.stringify(jwt));
-			next();
-		}
-	}
 
 	clickSubmit = event => {
 		event.preventDefault();
+		this.setState({loading: true});
 		const {email,password} = this.state;
 		const user = {
 			email,
 			password
 		};
 		//console.log(user);
-		this.signin(user).then(data => {
-			if(data.error) {
-				this.setState({ error: data.error });
-			}	
+			signin(user).then(data => {
+			if(data?.error) {
+				this.setState({ error: data.error , loading: false});
+			}
 			else{
 				//authenticate user
-				this.authenticate(data, () => {
+				authenticate(data, () => {
 					this.setState({redirectToRefrer: true})
 				})
 				//redirect
-			} 
+			}
 
 		});
-	};
-
-	signin = user => {
-		return fetch("http://localhost:3000/signin", {
-			method: "POST",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify(user)
-		})
-		.then(response => {
-			return response.json()
-		})
-		.catch(err => console.log(err))
 	};
 
 	signinForm = (email,password) => (
@@ -78,7 +59,7 @@ class Signin extends Component {
 	)
 
 	render() {
-		const {email,password,error,redirectToRefrer} = this.state;
+		const {email,password,error,redirectToRefrer,loading} = this.state;
 
 		if(redirectToRefrer){
 			return <Redirect to="/" />
@@ -91,6 +72,12 @@ class Signin extends Component {
 				<div className="alert alert-primary" style={{display: error ? "" : 'none'}}>
 					{error}
 				</div>
+
+				{loading ? (<div classname="jumbotron tect-center">
+					<h2>Loading...</h2>
+				</div>) : (
+						""
+				)}
 
 				{this.signinForm(email,password)}
 			</div>
