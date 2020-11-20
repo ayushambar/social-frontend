@@ -12,6 +12,7 @@ class EditProfile extends Component {
       name : "",
       email : "",
       password : "",
+      error: "",
       redirectToProfile: false
     }
   }
@@ -33,28 +34,47 @@ class EditProfile extends Component {
     this.init(userId);
   }
 
+  isValid = () => {
+    const {name,email,password} = this.state;
+    if(name.length == 0){
+      this.setState({error: "Name is required"});
+      return false;
+    }
+    if(!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)){
+      this.setState({error: "A valid email is required"});
+      return false;
+    }
+    if(password.length >=1 && password.length <=5){
+      this.setState({error: "Password must be at least 6 characters long"});
+      return false;
+    }
+    return true;
+  }
+
   handleChange = name => event => {
     this.setState({ [name]: event.target.value});			//revise syntax
   };
 
   clickSubmit = event => {
     event.preventDefault();
-    const {name,email,password} = this.state;
-    const user = {
-      name,
-      email,
-      password : password || undefined
-    };
-    //console.log(user);
-    const userId = this.props.match.params.userId;
-    const token = isAuthenticated().token;
+    if(this.isValid()){
+      const {name,email,password} = this.state;
+      const user = {
+        name,
+        email,
+        password : password || undefined
+      };
+      //console.log(user);
+      const userId = this.props.match.params.userId;
+      const token = isAuthenticated().token;
 
-     update(userId,token,user).then(data => {
-       if(data?.error) this.setState({ error: data.error });
-       else this.setState({
-          redirectToProfile: true
+       update(userId,token,user).then(data => {
+         if(data?.error) this.setState({ error: data.error });
+         else this.setState({
+            redirectToProfile: true
+         });
        });
-     });
+    }
   };
 
   signupForm = (name,email,password) => (
