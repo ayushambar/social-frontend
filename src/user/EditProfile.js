@@ -13,7 +13,9 @@ class EditProfile extends Component {
       email : "",
       password : "",
       error: "",
-      redirectToProfile: false
+      redirectToProfile: false,
+      fileSize: 0,
+      loading: false
     }
   }
 
@@ -36,8 +38,12 @@ class EditProfile extends Component {
   }
 
   isValid = () => {
-    const {name,email,password} = this.state;
-    if(name.length == 0){
+    const {name,email,password,fileSize} = this.state;
+    if(fileSize > 100000){
+      this.setState({error: "File size should be less than 100kb"});
+      return false;
+    }
+    if(name.length === 0){
       this.setState({error: "Name is required"});
       return false;
     }
@@ -53,21 +59,19 @@ class EditProfile extends Component {
   }
 
   handleChange = name => event => {
+    this.setState({error: "", loading: false});
     const value = name === 'photo' ? event.target.files[0] : event.target.value;
+
+    const fileSize = name === 'photo' ? event.target.files[0].size : 0;
     this.userData.set(name,value);
-    this.setState({ [name]: value});			//revise syntax
+    this.setState({ [name]: value, fileSize});			//revise syntax
   };
 
   clickSubmit = event => {
     event.preventDefault();
+    this.setState({loading: true})
     if(this.isValid()){
-      const {name,email,password} = this.state;
-      const user = {
-        name,
-        email,
-        password : password || undefined
-      };
-      //console.log(user);
+
       const userId = this.props.match.params.userId;
       const token = isAuthenticated().token;
 
@@ -103,7 +107,7 @@ class EditProfile extends Component {
   )
 
   render() {
-    const {id,name,email,password, redirectToProfile, error} = this.state;
+    const {id,name,email,password, redirectToProfile, error, loading} = this.state;
 
     if(redirectToProfile){
       return <Redirect to={`/user/${id}`} />
@@ -116,6 +120,12 @@ class EditProfile extends Component {
         <div className="alert alert-primary" style={{display: error ? "" : 'none'}}>
           {error}
         </div>
+
+        {loading ? (<div classname="jumbotron tect-center">
+					<h2>Loading...</h2>
+				</div>) : (
+						""
+				)}
 
         {this.signupForm(name,email,password)}
       </div>
