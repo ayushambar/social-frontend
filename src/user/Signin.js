@@ -73,7 +73,7 @@ class Signin extends Component {
 					{error}
 				</div>
 
-				{loading ? (<div classname="jumbotron tect-center">
+				{loading ? (<div className="jumbotron tect-center">
 					<h2>Loading...</h2>
 				</div>) : (
 						""

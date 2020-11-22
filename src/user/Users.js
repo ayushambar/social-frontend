@@ -26,14 +26,18 @@ componentDidMount() {
     <div className="row">
       {users.map((user,i) => (
         <div className="card col-md-4" key={i}>
-          <img className="card-img-top"
-               src={DefaultProfile}
-               alt={user.name}
-               style={{width: '100%', height:'15vw', objectFit:'cover'}}/>
+
+          <img style={{height : "200px", width: "auto"}}
+              className="card-img-top"
+              src={`${process.env.REACT_APP_API_URL}/user/photo/${user._id}`}
+              onError={i => (i.target.src = `${DefaultProfile}`)}
+              alt={user.name} />
+
           <div className="card-body">
             <h5 className="card-title">{user.name}</h5>
             <p className="card-text">{user.email}</p>
             <Link to={`/user/${user._id}`} className="btn btn-raised btn-primary btn-sm">View Profile</Link>
+
           </div>
         </div>
       ))}
