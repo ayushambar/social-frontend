@@ -1,10 +1,15 @@
 import React, {Component} from 'react';
-import {follow} from './apiUser';
+import {follow, unfollow} from './apiUser';
 
 class FollowProfileButton extends Component {
   followClick = () => {
     this.props.onButtonClick(follow);
   }
+
+  unfollowClick = () => {
+    this.props.onButtonClick(unfollow);
+  }
+
   render() {
     return (
       <div className="d-inline-block">
@@ -13,7 +18,7 @@ class FollowProfileButton extends Component {
           (
             <button onClick={this.followClick} className="btn btn-success btn-raised mr-5">Follow</button>
           ) : (
-            <button className="btn btn-warning btn-raised">Unfollow</button>
+            <button onClick={this.unfollowClick} className="btn btn-warning btn-raised">Unfollow</button>
           )
         }
       </div>
