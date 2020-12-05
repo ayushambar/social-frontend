@@ -78,7 +78,7 @@ export const unfollow =(userId,token, unfollowId) => {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`  
     },
     body: JSON.stringify({userId, unfollowId})
   })

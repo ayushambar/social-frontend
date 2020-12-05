@@ -5,6 +5,7 @@ import {read} from './apiUser';
 import DefaultProfile from '../images/avatar.png';
 import DeleteUser from './DeleteUser';
 import FollowProfileButton from './FollowProfileComponent';
+import ProfileTabs from './ProfileTabs';
 
 class Profile extends Component {
   constructor(){
@@ -102,6 +103,8 @@ class Profile extends Component {
               following={this.state.following}
               onButtonClick={this.clickFollowButton}
                />)}
+               <hr />
+               <ProfileTabs followers={user.followers} following={user.following}/>
           </div>
         </div>
         <div className="row">
